@@ -28,8 +28,10 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
 
     public GameObject WarningWord;
 
-    public Button RoomButton;
-    public Text RoomName;
+    public GameObject RoomList;
+    
+    private GameObject RoomButton;
+    [SerializeField] private Text RoomName;
 
     private void Awake()
     {
@@ -39,6 +41,8 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     {
         txtUserId.text = PlayerPrefs.GetString("USER_ID", "USER_" + Random.Range(1, 999));
         txtRoomName.text = PlayerPrefs.GetString("ROOM_NAME", "ROOM_" + Random.Range(1, 999));
+        RoomButton = Resources.Load<GameObject>("Room");
+        RoomName = Resources.Load<GameObject>("Room").GetComponentInChildren<Text>();
     }
 
     [ContextMenu("Join")]
@@ -76,7 +80,13 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
 
     public void OnCreateRoomCLick()
     {
-        PhotonNetwork.CreateRoom(txtRoomName.text, new RoomOptions { MaxPlayers = this.maxPlayer });
+        PhotonNetwork.CreateRoom(txtRoomName.text, new RoomOptions { MaxPlayers = this.maxPlayer,
+                                                                     IsVisible = true,
+                                                                     IsOpen = true});
+        RoomName.text = txtRoomName.text;
+        //string rName = txtRoomName.text;
+        //photonView.RPC("MakeRoom", RpcTarget.OthersBuffered, rName);
+        //MakeRoom(RoomName.text);
     }
 
     public void OnJoinRandomRoomClick()
@@ -103,7 +113,9 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         Debug.Log("Failed join room");
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = this.maxPlayer });
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = this.maxPlayer, 
+                                                         IsOpen = true,
+                                                         IsVisible = true });
     }
 
     public override void OnJoinedRoom()
@@ -118,4 +130,11 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1.5f);
         WarningWord.SetActive((false));
     }
+
+    //[PunRPC]
+    //public void MakeRoom(string rName)
+    //{
+    //    RoomName.text = rName;
+    //    Instantiate(RoomButton).transform.SetParent(RoomList.transform);
+    //}
 }
