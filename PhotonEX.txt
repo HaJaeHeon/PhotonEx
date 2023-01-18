@@ -1,0 +1,10 @@
+photonEX 
+---------------
+
+
+RoomName > input txt 옆으로 옮겨 따로 놓기
+CreateRoom 버튼이랑 같이
+
+Random JoinRoom >  빠른참여
+
+방 리스트 만들기

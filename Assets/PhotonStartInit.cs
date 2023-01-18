@@ -5,6 +5,8 @@ using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Button = UnityEngine.UIElements.Button;
 
 public class PhotonStartInit : MonoBehaviourPunCallbacks
 {
@@ -25,6 +27,9 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     public GameObject[] panels;
 
     public GameObject WarningWord;
+
+    public Button RoomButton;
+    public Text RoomName;
 
     private void Awake()
     {

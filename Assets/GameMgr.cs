@@ -78,7 +78,7 @@ public class GameMgr : MonoBehaviourPunCallbacks
         string msg = string.Format("[{0}] {1}", PhotonNetwork.LocalPlayer.NickName, input.text);
         photonView.RPC("ReceiveMsg", RpcTarget.OthersBuffered, msg);
         ReceiveMsg(msg);
-        input.ActivateInputField(); // ¹Ý´ë´Â input.select(); (¹Ý´ë·Î Åä±Û)
+        input.ActivateInputField(); // ë°˜ëŒ€ëŠ” input.select(); (ë°˜ëŒ€ë¡œ í† ê¸€)
         input.text = "";
     }
 
