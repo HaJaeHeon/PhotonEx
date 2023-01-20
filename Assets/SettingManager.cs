@@ -16,18 +16,18 @@ public class SettingManager : MonoBehaviour
     FullScreenMode screenMode;
     public Toggle fullscreenBtn;
 
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(instance);
-        }
-
-        else
-            Destroy(gameObject);
-
-    }
+    //private void Awake()
+    //{
+    //    if (instance == null)
+    //    {
+    //        instance = this;
+    //        DontDestroyOnLoad(instance);
+    //    }
+    //
+    //    else
+    //        Destroy(gameObject);
+//
+  //  }
 
     private void Start()
     {

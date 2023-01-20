@@ -1037,6 +1037,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activePanel: 0
   userId: H
+  logLevel: 1
   maxPlayer: 20
   txtUserId: {fileID: 1689349569}
   txtRoomName: {fileID: 637766125}
@@ -1075,11 +1076,10 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 0
+  Synchronization: 3
   OwnershipTransfer: 0
-  observableSearch: 0
-  ObservedComponents:
-  - {fileID: 0}
+  observableSearch: 2
+  ObservedComponents: []
   sceneViewId: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
