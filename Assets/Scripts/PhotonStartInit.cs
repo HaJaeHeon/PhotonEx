@@ -27,7 +27,7 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     public byte maxPlayer = 4;
 
     public TMP_InputField txtUserId;
-    public TMP_InputField txtRoomName;
+    //public TMP_InputField txtRoomName;
 
     public GameObject[] panels;
 
@@ -48,7 +48,7 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     private void Start()
     {
         txtUserId.text = PlayerPrefs.GetString("USER_ID", "USER_" + Random.Range(1, 999));
-        txtRoomName.text = PlayerPrefs.GetString("ROOM_NAME", "ROOM_" + Random.Range(1, 999));
+        //txtRoomName.text = PlayerPrefs.GetString("ROOM_NAME", "ROOM_" + Random.Range(1, 999));
         PhotonNetwork.GameVersion = this._gameVersion;
         PhotonNetwork.ConnectUsingSettings();
         //RoomButton = Resources.Load<GameObject>("Room");
@@ -103,9 +103,19 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     //    //MakeRoom(RoomName.text);
     //}
 
+    public void Connect()
+    {
+        PhotonNetwork.ConnectUsingSettings();
+    }
+
+    public void Disconnected()
+    {
+        PhotonNetwork.Disconnect();
+    }
+
     public void OnJoinRandomRoomClick()
     {
-        PhotonNetwork.JoinRandomRoom();
+        PhotonNetwork.JoinOrCreateRoom("Room", new RoomOptions{MaxPlayers = this.maxPlayer, IsOpen = true, IsVisible = true}, null);
     }
 
     private void ChangePanel(ActivePanel panel)
@@ -125,6 +135,7 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
                                                          IsOpen = true,
                                                          IsVisible = true });
     }
+    
     public override void OnJoinedRoom()
     {
         Debug.Log("Joined room");
@@ -132,10 +143,19 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
         SceneManager.LoadScene("RoomScene");
     }
 
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        PhotonNetwork.CreateRoom(null, new RoomOptions
+        {
+            MaxPlayers = this.maxPlayer,
+            IsOpen = true,
+            IsVisible = true
+        });
+    }
+
     public override void OnDisconnected(DisconnectCause cause)
     {
         Debug.Log("Disconnected");
-        PhotonNetwork.ConnectUsingSettings();
     }
     
     private IEnumerator DisappearWarning()
