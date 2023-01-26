@@ -16,8 +16,7 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     public enum ActivePanel
     {
         LOGIN = 0,
-        ROOMS = 1,
-        LOBBY = 2
+        ROOMS = 1
     }
     
     public ActivePanel activePanel = ActivePanel.LOGIN;
@@ -34,10 +33,10 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
 
     public GameObject WarningWord;
 
-    public GameObject RoomList;
+    //public GameObject RoomList;
     
-    private GameObject RoomButton;
-    [SerializeField] private Text RoomName;
+    //private GameObject RoomButton;
+    //[SerializeField] private Text RoomName;
 
     //private readonly byte CreateRoomButtonEvent = 0;
 
@@ -45,14 +44,15 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.LogLevel = logLevel;
         PhotonNetwork.AutomaticallySyncScene = true;
-        OnJoinedLobby();
     }
     private void Start()
     {
         txtUserId.text = PlayerPrefs.GetString("USER_ID", "USER_" + Random.Range(1, 999));
         txtRoomName.text = PlayerPrefs.GetString("ROOM_NAME", "ROOM_" + Random.Range(1, 999));
-        RoomButton = Resources.Load<GameObject>("Room");
-        RoomName = Resources.Load<GameObject>("Room").GetComponentInChildren<Text>();
+        PhotonNetwork.GameVersion = this._gameVersion;
+        PhotonNetwork.ConnectUsingSettings();
+        //RoomButton = Resources.Load<GameObject>("Room");
+        //RoomName = Resources.Load<GameObject>("Room").GetComponentInChildren<Text>();
     }
 
     [ContextMenu("Join")]
@@ -88,26 +88,25 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
         ChangePanel(ActivePanel.LOGIN);
     }
 
-    public void OnCreateRoomCLick()
-    {
-        PhotonNetwork.Instantiate("RoomButton", RoomButton.transform.position, Quaternion.identity);
-
-        PhotonNetwork.CreateRoom(txtRoomName.text, new RoomOptions { MaxPlayers = this.maxPlayer,
-                                                                     IsVisible = true,
-                                                                     IsOpen = true});
-        RoomName.text = txtRoomName.text;
-        
-        string rName = txtRoomName.text;
-        //SendRaiseEvent(EVENTCODE.INSTANCIATE_BUTTON, new object[1], SEND_OPTION.OTHER);
-        //photonView.RPC("MakeRoom", RpcTarget.OthersBuffered, rName);
-        //MakeRoom(RoomName.text);
-    }
+    //public void OnCreateRoomCLick()
+    //{
+    //    //PhotonNetwork.Instantiate("RoomButton", RoomButton.transform.position, Quaternion.identity);
+    //
+    //    PhotonNetwork.CreateRoom(txtRoomName.text, new RoomOptions { MaxPlayers = this.maxPlayer,
+    //                                                                 IsVisible = true,
+    //                                                                 IsOpen = true});
+    //    RoomName.text = txtRoomName.text;
+    //    
+    //    string rName = txtRoomName.text;
+    //    //SendRaiseEvent(EVENTCODE.INSTANCIATE_BUTTON, new object[1], SEND_OPTION.OTHER);
+    //    //photonView.RPC("MakeRoom", RpcTarget.OthersBuffered, rName);
+    //    //MakeRoom(RoomName.text);
+    //}
 
     public void OnJoinRandomRoomClick()
     {
         PhotonNetwork.JoinRandomRoom();
     }
-
 
     private void ChangePanel(ActivePanel panel)
     {
@@ -119,11 +118,6 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
         panels[(int)panel].SetActive(true);
     }
 
-    public override void OnConnectedToMaster()
-    {
-        Debug.Log("Connect To Master");
-    }
-
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         Debug.Log("Failed join room");
@@ -131,7 +125,6 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
                                                          IsOpen = true,
                                                          IsVisible = true });
     }
-
     public override void OnJoinedRoom()
     {
         Debug.Log("Joined room");
@@ -142,11 +135,7 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     public override void OnDisconnected(DisconnectCause cause)
     {
         Debug.Log("Disconnected");
-    }
-
-    public override void OnJoinedLobby()
-    {
-        Debug.Log("Joined Lobby");
+        PhotonNetwork.ConnectUsingSettings();
     }
     
     private IEnumerator DisappearWarning()
@@ -154,6 +143,8 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1.5f);
         WarningWord.SetActive((false));
     }
+
+    #region NotUseSendRaiseEvent
 
     //public enum EVENTCODE
     //{
@@ -206,10 +197,17 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     //    }
     //}
 
-    [PunRPC]
-    public void MakeRoom(string rName)
-    {
-        RoomName.text = rName;
-        Instantiate(RoomButton).transform.SetParent(RoomList.transform);
-    }
+    #endregion
+
+    #region notUseRPC
+
+    //[PunRPC]
+    //public void MakeRoom(string rName)
+    //{
+    //    RoomName.text = rName;
+    //    Instantiate(RoomButton).transform.SetParent(RoomList.transform);
+    //}
+
+    #endregion
+    
 }
