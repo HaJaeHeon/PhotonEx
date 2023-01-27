@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Pun.Demo.Cockpit;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine.SceneManagement;
@@ -27,7 +28,7 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     public byte maxPlayer = 4;
 
     public TMP_InputField txtUserId;
-    //public TMP_InputField txtRoomName;
+    public TMP_InputField txtRoomName;
 
     public GameObject[] panels;
 
@@ -37,8 +38,6 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     
     //private GameObject RoomButton;
     //[SerializeField] private Text RoomName;
-
-    //private readonly byte CreateRoomButtonEvent = 0;
 
     private void Awake()
     {
@@ -107,15 +106,23 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.ConnectUsingSettings();
     }
-
-    public void Disconnected()
-    {
-        PhotonNetwork.Disconnect();
-    }
-
+    
     public void OnJoinRandomRoomClick()
     {
-        PhotonNetwork.JoinOrCreateRoom("Room", new RoomOptions{MaxPlayers = this.maxPlayer, IsOpen = true, IsVisible = true}, null);
+        PhotonNetwork.JoinOrCreateRoom("Room",
+            new RoomOptions { MaxPlayers = this.maxPlayer, IsOpen = true, IsVisible = true }, null);
+    }
+
+    public void JoinOrCreateRoom()
+    {
+        PhotonNetwork.LocalPlayer.NickName = txtUserId.text;
+
+        RoomOptions roomOptions = new RoomOptions();
+        roomOptions.MaxPlayers = maxPlayer;
+        roomOptions.IsOpen = true;
+        roomOptions.IsVisible = true;
+        
+       
     }
 
     private void ChangePanel(ActivePanel panel)

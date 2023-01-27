@@ -95,7 +95,6 @@ public class GameMgr : MonoBehaviourPunCallbacks
         int idx = Random.Range(1, points.Length);
         PhotonNetwork.Instantiate("Player", points[idx].position, Quaternion.identity);
     }
-
     //void chatterUpdate()
     //{
     //    chatters = "Player List\n";

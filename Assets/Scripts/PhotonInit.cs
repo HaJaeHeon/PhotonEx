@@ -25,7 +25,7 @@ public class PhotonInit : MonoBehaviourPunCallbacks
         userId = PhotonNetwork.NickName;
 
         PhotonNetwork.ConnectUsingSettings();
-
+        
     }
 
 
