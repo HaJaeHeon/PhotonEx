@@ -24,8 +24,7 @@ public class PhotonInit : MonoBehaviourPunCallbacks
         PhotonNetwork.GameVersion = this.gameVersion;
         userId = PhotonNetwork.NickName;
 
-        PhotonNetwork.ConnectUsingSettings();
-        
+        //PhotonNetwork.ConnectUsingSettings();
     }
 
 
@@ -33,7 +32,7 @@ public class PhotonInit : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("Connect To Master");
-        PhotonNetwork.JoinRandomRoom();
+        //PhotonNetwork.JoinRandomRoom();
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
