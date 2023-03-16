@@ -571,10 +571,12 @@ MonoBehaviour:
   tr: {fileID: 0}
   h: 0
   v: 0
+  mouseX: 0
   mouseSen: 0
   speed: 10
   rotSpeed: 100
   nickName: {fileID: 2074341444300322882}
+  senSl: {fileID: 0}
 --- !u!114 &2074341444832568809
 MonoBehaviour:
   m_ObjectHideFlags: 0

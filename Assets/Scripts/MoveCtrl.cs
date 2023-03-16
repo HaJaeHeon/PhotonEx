@@ -15,11 +15,15 @@ public class MoveCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField]
     private Transform tr;
     [SerializeField]
-    private float h, v, mouseSen;
+    private float h, v, mouseX;
+
+    public float mouseSen =1f;
 
     public float speed = 10f;
     public float rotSpeed = 100f;
     public TextMeshPro nickName;
+
+    public Slider senSl;
 
     private void Start()
     {
@@ -35,6 +39,9 @@ public class MoveCtrl : MonoBehaviourPunCallbacks, IPunObservable
         tr = gameObject.GetComponent<Transform>();
 
         nickName.text = photonView.Owner.NickName;
+
+        senSl = GameObject.FindWithTag("Slider")
+            .GetComponent<Slider>(); //GameObject.FindGameObjectsWithTag("Slider")GetComponent<Slider>();
     }
 
     private void Update()
@@ -43,11 +50,13 @@ public class MoveCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             v = Input.GetAxis("Vertical");
             h = Input.GetAxis("Horizontal");
-            mouseSen = Input.GetAxis("Mouse X");
+            mouseX = Input.GetAxis("Mouse X");
 
             tr.Translate(Vector3.forward * v * speed * Time.deltaTime);
             tr.Translate(Vector3.left * -h * speed * Time.deltaTime);
-            tr.Rotate(Vector3.up * mouseSen * rotSpeed * Time.deltaTime);
+            tr.Rotate(Vector3.up * mouseX * mouseSen* rotSpeed * Time.deltaTime);
+            
+            OnChangeSen();
         }
         else
         {
@@ -89,6 +98,23 @@ public class MoveCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             currPos = (Vector3)stream.ReceiveNext();
             currRot = (Quaternion)stream.ReceiveNext();
+        }
+    }
+
+    public void OnChangeSen()
+    {
+        senSl.maxValue = 5f;
+        senSl.minValue = 0.5f;
+        float temp = senSl.value;
+
+        if (senSl.gameObject.activeSelf == false)
+        {
+            mouseSen = temp;
+        }
+        else
+        {
+            mouseSen = senSl.value;
+
         }
     }
 }

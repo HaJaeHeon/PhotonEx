@@ -91,6 +91,15 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
         ChangePanel(ActivePanel.LOGIN);
     }
 
+    private void OnConnectedToServer()
+    {
+        Debug.Log("Connected To Server");
+    }
+
+    public override void OnConnectedToMaster()
+    {
+        PhotonNetwork.AutomaticallySyncScene = true;
+    }
 
     public void Connect()
     {

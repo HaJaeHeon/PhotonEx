@@ -82,6 +82,7 @@ public class SettingManager : MonoBehaviour
         Screen.SetResolution(resolutions[resolutionNum].width,
             resolutions[resolutionNum].height,
             fullscreenBtn.isOn);
+        Debug.Log(resolutionNum);
     }
 
     public void ResButtonClk()
