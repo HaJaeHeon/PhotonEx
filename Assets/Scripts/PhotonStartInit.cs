@@ -4,12 +4,9 @@ using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using UnityEngine;
 using Photon.Pun;
-using Photon.Pun.Demo.Cockpit;
 using Photon.Realtime;
 using TMPro;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Button = UnityEngine.UIElements.Button;
 using Random = UnityEngine.Random;
 
 public class PhotonStartInit : MonoBehaviourPunCallbacks
@@ -44,24 +41,21 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     [Space]
     public Text myPropTxt;
     public Text currentMatchTxt;
-    //public GameObject RoomList;
-    
-    //private GameObject RoomButton;
-    //[SerializeField] private Text RoomName;
 
     private void Awake()
     {
         PhotonNetwork.LogLevel = logLevel;
+        OnJoinedLobby();
         PhotonNetwork.AutomaticallySyncScene = true;
     }
     private void Start()
     {
         txtUserId.text = PlayerPrefs.GetString("USER_ID", "USER_" + Random.Range(1, 999));
-        //txtRoomName.text = PlayerPrefs.GetString("ROOM_NAME", "ROOM_" + Random.Range(1, 999));
         PhotonNetwork.GameVersion = this._gameVersion;
-        PhotonNetwork.ConnectUsingSettings();
-        //RoomButton = Resources.Load<GameObject>("Room");
-        //RoomName = Resources.Load<GameObject>("Room").GetComponentInChildren<Text>();
+        if (!PhotonNetwork.IsConnected)
+            PhotonNetwork.ConnectUsingSettings();
+        else
+            return;
     }
 
     [ContextMenu("Join")]
@@ -97,20 +91,6 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
         ChangePanel(ActivePanel.LOGIN);
     }
 
-    //public void OnCreateRoomCLick()
-    //{
-    //    //PhotonNetwork.Instantiate("RoomButton", RoomButton.transform.position, Quaternion.identity);
-    //
-    //    PhotonNetwork.CreateRoom(txtRoomName.text, new RoomOptions { MaxPlayers = this.maxPlayer,
-    //                                                                 IsVisible = true,
-    //                                                                 IsOpen = true});
-    //    RoomName.text = txtRoomName.text;
-    //    
-    //    string rName = txtRoomName.text;
-    //    //SendRaiseEvent(EVENTCODE.INSTANCIATE_BUTTON, new object[1], SEND_OPTION.OTHER);
-    //    //photonView.RPC("MakeRoom", RpcTarget.OthersBuffered, rName);
-    //    //MakeRoom(RoomName.text);
-    //}
 
     public void Connect()
     {
@@ -171,10 +151,72 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     }
 
     public void ClickCancelMatch()
-    {
-        PhotonNetwork.LeaveRoom();
+    {     
         ChangePanel(ActivePanel.ROOMS);
+        PhotonNetwork.LeaveRoom();
     }
+
+    private void ChangePanel(ActivePanel panel)
+    {
+        foreach (GameObject _panel in panels)
+        {
+            //Debug.Log(panels);
+            _panel.SetActive(false);
+        }
+        panels[(int)panel].SetActive(true);
+    }
+
+    
+
+    private void UpdatePlayerCount()
+    {
+        currentMatchTxt.text = $"{PhotonNetwork.CurrentRoom.PlayerCount} / {PhotonNetwork.CurrentRoom.MaxPlayers}";
+    }
+    
+    public override void OnJoinedRoom()
+    {
+        //PhotonNetwork.IsMessageQueueRunning = false;
+        
+        ChangePanel(ActivePanel.MATCH);
+        
+        byte maxPlayers = byte.Parse(dropdown_RoomMaxPlayers.options[dropdown_RoomMaxPlayers.value].text);
+        byte maxTime = byte.Parse(dropdown_RoomMaxTime.options[dropdown_RoomMaxTime.value].text);
+
+        myPropTxt.text = "MaxPlayer : " + maxPlayers.ToString() + " \n " + "PlayTime : " + maxTime.ToString();
+        //currentMatchTxt.text = $"{PhotonNetwork.CurrentRoom.PlayerCount} / {PhotonNetwork.CurrentRoom.MaxPlayers}";
+        UpdatePlayerCount();
+    }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        UpdatePlayerCount();
+        
+        if (PhotonNetwork.IsMasterClient)
+        {
+            if(PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
+                PhotonNetwork.LoadLevel("RoomScene");
+        }
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        UpdatePlayerCount();
+    }
+
+   
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        Debug.Log("Disconnected");
+    }
+    
+    private IEnumerator DisappearWarning()
+    {
+        yield return new WaitForSeconds(1.5f);
+        WarningWord.SetActive((false));
+    }
+
+    #region not use method
+    
 
     //public void JoinOrCreateRoom()
     //{
@@ -187,61 +229,44 @@ public class PhotonStartInit : MonoBehaviourPunCallbacks
     //    
     //   
     //}
-
-    private void ChangePanel(ActivePanel panel)
-    {
-        foreach (GameObject _panel in panels)
-        {
-            //Debug.Log(panels);
-            _panel.SetActive(false);
-        }
-        panels[(int)panel].SetActive(true);
-    }
-
-    public override void OnJoinRandomFailed(short returnCode, string message)
-    {
-        Debug.Log("Failed join room");
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = this.maxPlayer, 
-                                                         IsOpen = true,
-                                                         IsVisible = true });
-    }
     
-    public override void OnJoinedRoom()
-    {
-        Debug.Log("Joined room");
-        PhotonNetwork.IsMessageQueueRunning = false;
-        //SceneManager.LoadScene("RoomScene");
-        
-        ChangePanel(ActivePanel.MATCH);
-        
-        byte maxPlayers = byte.Parse(dropdown_RoomMaxPlayers.options[dropdown_RoomMaxPlayers.value].text);
-        byte maxTime = byte.Parse(dropdown_RoomMaxTime.options[dropdown_RoomMaxTime.value].text);
+    //public void OnCreateRoomCLick()
+    //{
+    //    //PhotonNetwork.Instantiate("RoomButton", RoomButton.transform.position, Quaternion.identity);
+    //
+    //    PhotonNetwork.CreateRoom(txtRoomName.text, new RoomOptions { MaxPlayers = this.maxPlayer,
+    //                                                                 IsVisible = true,
+    //                                                                 IsOpen = true});
+    //    RoomName.text = txtRoomName.text;
+    //    
+    //    string rName = txtRoomName.text;
+    //    //SendRaiseEvent(EVENTCODE.INSTANCIATE_BUTTON, new object[1], SEND_OPTION.OTHER);
+    //    //photonView.RPC("MakeRoom", RpcTarget.OthersBuffered, rName);
+    //    //MakeRoom(RoomName.text);
+    //}
 
-        myPropTxt.text = "MacPlayer : " + maxPlayers.ToString() + " \n " + "PlayTime : " + maxTime.ToString();
-        currentMatchTxt.text = $"{PhotonNetwork.CurrentRoom.PlayerCount} / {PhotonNetwork.CurrentRoom.MaxPlayers}";
-
-    }
-
-    public override void OnJoinRoomFailed(short returnCode, string message)
-    {
-        PhotonNetwork.CreateRoom(null, new RoomOptions
-        {
-            MaxPlayers = this.maxPlayer,
-            IsOpen = true,
-            IsVisible = true
-        });
-    }
-
-    public override void OnDisconnected(DisconnectCause cause)
-    {
-        Debug.Log("Disconnected");
-    }
     
-    private IEnumerator DisappearWarning()
-    {
-        yield return new WaitForSeconds(1.5f);
-        WarningWord.SetActive((false));
-    }
+
+    #endregion
+    
+    #region FailRoom
+    //public override void OnJoinRoomFailed(short returnCode, string message)
+    //{
+    //    PhotonNetwork.CreateRoom(null, new RoomOptions
+    //    {
+    //        MaxPlayers = this.maxPlayer,
+    //        IsOpen = true,
+    //        IsVisible = true
+    //    });
+    //}
+    //public override void OnJoinRandomFailed(short returnCode, string message)
+    //{
+    //    Debug.Log("Failed join room");
+    //    PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = this.maxPlayer, 
+    //        IsOpen = true,
+    //        IsVisible = true });
+    //}
+    #endregion
 
     #region NotUseSendRaiseEvent
 
