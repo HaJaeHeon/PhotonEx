@@ -24,7 +24,9 @@ public class MoveCtrl : MonoBehaviourPunCallbacks, IPunObservable
     public TextMeshPro nickName;
 
     public Slider senSl;
+    public float temp = 0.5f;
 
+    public GameObject UIPanel;
     private void Start()
     {
         if(photonView.IsMine)
@@ -40,8 +42,9 @@ public class MoveCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
         nickName.text = photonView.Owner.NickName;
 
-        senSl = GameObject.FindWithTag("Slider")
-            .GetComponent<Slider>(); //GameObject.FindGameObjectsWithTag("Slider")GetComponent<Slider>();
+        UIPanel = GameObject.Find("UICanvas").gameObject;
+        senSl = UIPanel.transform.GetChild(1).transform.GetChild(2).GetChild(2).transform.GetChild(0)
+            .GetComponent<Slider>();
     }
 
     private void Update()
@@ -103,18 +106,25 @@ public class MoveCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnChangeSen()
     {
-        senSl.maxValue = 5f;
-        senSl.minValue = 0.5f;
-        float temp = senSl.value;
-
-        if (senSl.gameObject.activeSelf == false)
+        if (senSl.Equals(null))
         {
-            mouseSen = temp;
+            if (temp == 0.5f)
+            {
+                senSl = UIPanel.transform.GetChild(1).transform.GetChild(2).GetChild(2).transform.GetChild(0)
+                    .GetComponent<Slider>();
+                mouseSen = temp;
+            }
+            else
+            {
+                mouseSen = temp;
+            }
         }
         else
         {
+            senSl.maxValue = 5f;
+            senSl.minValue = 0.5f;
             mouseSen = senSl.value;
-
+            temp = senSl.value;
         }
     }
 }

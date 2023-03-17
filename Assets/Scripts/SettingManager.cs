@@ -66,7 +66,7 @@ public class SettingManager : MonoBehaviour
         foreach (Resolution item in resolutions)
         {
             Dropdown.OptionData option = new Dropdown.OptionData();
-            option.text = item.width + "x" + item.height + " " /*+ item.refreshRate + "hz"*/;
+            option.text = item.width + "x" + item.height /*+ " " + item.refreshRate + "hz"*/;
             resolutionDropdown.options.Add(option);
 
             if (item.width == Screen.width && item.height == Screen.height)

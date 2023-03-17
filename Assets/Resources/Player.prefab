@@ -577,6 +577,8 @@ MonoBehaviour:
   rotSpeed: 100
   nickName: {fileID: 2074341444300322882}
   senSl: {fileID: 0}
+  temp: 0.5
+  UIPanel: {fileID: 0}
 --- !u!114 &2074341444832568809
 MonoBehaviour:
   m_ObjectHideFlags: 0
