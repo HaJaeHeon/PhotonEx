@@ -14,3 +14,8 @@ GameScene에서 플레이어 머리 위에는 초기에 설정한 NickName이 �
 채팅창은 photonChat을 이용해 PunRPC를 통해 같은 방 내의 모든 플레이어에게 전달
 
 SettingUI에는 Sensitivity와 Resolution만 만들어놓았습니다.
+
+
+# 빌드
+
+https://drive.google.com/drive/folders/1j7rAFzmx5MYIiDLuwCjKWVz8m_0rc7Iw?usp=sharing
